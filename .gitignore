@@ -24,9 +24,7 @@ wheels/
 .venv
 venv/
 ENV/
-*.db
-*.sqlite
-*.sqlite3
+
 
 .idea/
 .vscode/
