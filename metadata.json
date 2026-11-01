@@ -1,0 +1,8 @@
+{
+  "name": "Orbit — The Agent-First Workspace",
+  "description": "An agent-first development workspace that helps you turn ambitious ideas into working software, with interactive AI agent orchestration, waitlist queues, and Mission Control admin dashboard.",
+  "permissions": [],
+  "capabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
