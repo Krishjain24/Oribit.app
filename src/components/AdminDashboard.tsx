@@ -160,9 +160,6 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToWebsite 
             <button type="button" className="btn btn-ghost btn-sm" onClick={onBackToWebsite}>
               ← Back to Site
             </button>
-            <small style={{ color: 'var(--muted)', fontSize: '11px' }}>
-              Default: admin@orbit.dev / OrbitAdminPassword2026!
-            </small>
           </div>
         </div>
       </div>
