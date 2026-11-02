@@ -11,8 +11,8 @@ type AdminTab = 'overview' | 'waitlist' | 'inquiries' | 'database' | 'users' | '
 
 export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToWebsite }) => {
   const [currentUser, setCurrentUser] = useState<User | null>(store.getCurrentUser());
-  const [emailInput, setEmailInput] = useState('admin@orbit.dev');
-  const [passwordInput, setPasswordInput] = useState('OrbitAdminPassword2026!');
+  const [emailInput, setEmailInput] = useState('');
+  const [passwordInput, setPasswordInput] = useState('');
   const [loginError, setLoginError] = useState<string | null>(null);
 
   const [activeTab, setActiveTab] = useState<AdminTab>('overview');
