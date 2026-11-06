@@ -3,14 +3,12 @@ import React, { useState } from 'react';
 interface HeaderProps {
   onOpenWaitlist: () => void;
   onOpenAdmin: () => void;
-  onOpenQuickStart?: () => void;
   isAdminView?: boolean;
 }
 
 export const Header: React.FC<HeaderProps> = ({
   onOpenWaitlist,
   onOpenAdmin,
-  onOpenQuickStart,
   isAdminView,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -63,19 +61,6 @@ export const Header: React.FC<HeaderProps> = ({
               <a href="#for-builders" onClick={() => setIsOpen(false)}>
                 For builders
               </a>
-              {onOpenQuickStart && (
-                <button
-                  type="button"
-                  className="nav-link"
-                  onClick={() => {
-                    setIsOpen(false);
-                    onOpenQuickStart();
-                  }}
-                  style={{ color: '#059669', fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: '4px' }}
-                >
-                  Start on Win / Mac ⚡
-                </button>
-              )}
               <a
                 href="/admin"
                 className="nav-link"
@@ -84,9 +69,9 @@ export const Header: React.FC<HeaderProps> = ({
                   setIsOpen(false);
                   onOpenAdmin();
                 }}
-                style={{ color: 'var(--violet)', fontWeight: 600 }}
+                style={{ fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: '6px' }}
               >
-                Mission Control ◈
+                <span>Console</span>
               </a>
               <button
                 type="button"
@@ -101,19 +86,6 @@ export const Header: React.FC<HeaderProps> = ({
             </>
           ) : (
             <>
-              {onOpenQuickStart && (
-                <button
-                  type="button"
-                  className="nav-link"
-                  onClick={() => {
-                    setIsOpen(false);
-                    onOpenQuickStart();
-                  }}
-                  style={{ color: '#059669', fontWeight: 600 }}
-                >
-                  1-Click Launchers ⚡
-                </button>
-              )}
               <a
                 href="/"
                 className="nav-link"

@@ -4,10 +4,14 @@ import { AgentStep } from '../types';
 
 interface HeroProps {
   currentBuilderRole?: string;
+  onOpenWaitlist?: () => void;
   onOpenQuickStart?: () => void;
 }
 
-export const Hero: React.FC<HeroProps> = ({ currentBuilderRole = 'fullstack', onOpenQuickStart }) => {
+export const Hero: React.FC<HeroProps> = ({
+  currentBuilderRole = 'fullstack',
+  onOpenWaitlist,
+}) => {
   const [prompt, setPrompt] = useState(
     'Give the product page a calmer layout and make the gallery feel more immersive.'
   );
@@ -49,6 +53,17 @@ export const Hero: React.FC<HeroProps> = ({ currentBuilderRole = 'fullstack', on
     }, 450);
   };
 
+  const handleSelectSamplePrompt = (sampleText: string) => {
+    setPrompt(sampleText);
+    setIsRunning(true);
+    setTimeout(() => {
+      const result = AgentService.simulateDemo(sampleText, currentBuilderRole);
+      setSteps(result.steps);
+      setProjectName(result.project_name);
+      setIsRunning(false);
+    }, 450);
+  };
+
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
       e.preventDefault();
@@ -71,21 +86,21 @@ export const Hero: React.FC<HeroProps> = ({ currentBuilderRole = 'fullstack', on
           Bring your best ideas. Orbit’s AI agents plan, build, and check your work while you stay in control of the direction.
         </p>
         <div className="hero-actions">
-          {onOpenQuickStart && (
+          {onOpenWaitlist && (
             <button
               type="button"
               className="button button-lime"
-              onClick={onOpenQuickStart}
+              onClick={onOpenWaitlist}
               style={{ cursor: 'pointer', border: 'none' }}
             >
-              Start on Win / Mac <span>⚡</span>
+              Join Early Access <span aria-hidden="true">↗</span>
             </button>
           )}
           <a className="button button-dark" href="#platform">
-            Explore the platform <span aria-hidden="true">↗</span>
+            Explore the platform <span aria-hidden="true">↓</span>
           </a>
           <a className="text-link" href="#workflow">
-            See how it works <span aria-hidden="true">↓</span>
+            See how it works <span aria-hidden="true">→</span>
           </a>
         </div>
         <div className="hero-note">
@@ -153,6 +168,41 @@ export const Hero: React.FC<HeroProps> = ({ currentBuilderRole = 'fullstack', on
                 >
                   {isRunning ? '...' : 'Run'} <span>✳</span>
                 </button>
+              </div>
+              <div style={{ display: 'flex', gap: '6px', margin: '8px 0 14px', flexWrap: 'wrap' }}>
+                <span style={{ fontSize: '10px', color: 'var(--muted)', alignSelf: 'center', fontWeight: 600, letterSpacing: '0.04em' }}>TRY:</span>
+                {[
+                  { label: 'Storefront refresh', text: 'Give the product page a calmer layout and make the gallery feel more immersive.' },
+                  { label: 'Auth flow', text: 'Implement JWT login with refresh tokens, password reset, and session storage.' },
+                  { label: 'Dark mode engine', text: 'Build a zero-runtime CSS variable theme switcher with system preference detection.' },
+                ].map((item) => (
+                  <button
+                    key={item.label}
+                    type="button"
+                    onClick={() => handleSelectSamplePrompt(item.text)}
+                    style={{
+                      background: 'rgba(238, 235, 255, 0.65)',
+                      border: '1px solid rgba(117, 100, 245, 0.2)',
+                      borderRadius: '999px',
+                      padding: '3px 10px',
+                      fontSize: '11px',
+                      color: 'var(--violet-dark)',
+                      cursor: 'pointer',
+                      fontWeight: 500,
+                      transition: 'all 0.15s ease',
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.background = 'var(--violet)';
+                      e.currentTarget.style.color = '#fff';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.background = 'rgba(238, 235, 255, 0.65)';
+                      e.currentTarget.style.color = 'var(--violet-dark)';
+                    }}
+                  >
+                    {item.label}
+                  </button>
+                ))}
               </div>
               <div className="activity-label">
                 <span>AGENT ACTIVITY</span>

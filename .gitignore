@@ -1,3 +1,9 @@
+# Node / frontend
+node_modules/
+dist/
+.vite/
+
+# Python
 __pycache__/
 *.py[cod]
 *$py.class
@@ -6,7 +12,6 @@ __pycache__/
 env/
 build/
 develop-eggs/
-dist/
 downloads/
 eggs/
 .eggs/
@@ -20,17 +25,19 @@ wheels/
 .installed.cfg
 *.egg
 
+# Environment
 .env
 .venv
 venv/
 ENV/
 
-
+# Editors
 .idea/
 .vscode/
 *.swp
 *.swo
 
+# Test / coverage
 .pytest_cache/
 .coverage
 htmlcov/

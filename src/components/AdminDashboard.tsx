@@ -129,7 +129,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToWebsite 
             <span className="brand-mark">◈</span>
             <h2>orbit admin</h2>
           </div>
-          <p className="auth-subtitle">Sign in to access Orbit Mission Control & SQLite Database</p>
+          <p className="auth-subtitle">Sign in to access Orbit Workspace Console</p>
           <form onSubmit={handleLogin}>
             <div className="input-group">
               <label htmlFor="admin-email">Email</label>
@@ -172,7 +172,9 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToWebsite 
         <div className="sidebar-brand">
           <span className="brand-mark">◈</span>
           <span>orbit</span>
-          <span className="admin-badge">SQLITE READY</span>
+          <span className="admin-badge" style={{ background: '#dcfce7', color: '#166534', border: '1px solid #bbf7d0' }}>
+            ● ONLINE
+          </span>
         </div>
         <nav className="sidebar-nav">
           <button
@@ -198,7 +200,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToWebsite 
             onClick={() => setActiveTab('database')}
             style={{ fontWeight: activeTab === 'database' ? 700 : 500 }}
           >
-            Database (orbit.db) <span className="badge" style={{ background: '#dcfce7', color: '#166534' }}>SQL</span>
+            Data Explorer <span className="badge" style={{ background: '#f1f5f9', color: '#475569' }}>DATA</span>
           </button>
           <button
             className={`nav-item ${activeTab === 'users' ? 'active' : ''}`}
@@ -234,21 +236,15 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToWebsite 
               {activeTab === 'overview' && 'Mission Overview'}
               {activeTab === 'waitlist' && 'Waitlist Queue Management'}
               {activeTab === 'inquiries' && 'Inquiries & Demo Requests'}
-              {activeTab === 'database' && 'SQLite Database Inspector (orbit.db)'}
+              {activeTab === 'database' && 'Data Explorer & Records'}
               {activeTab === 'users' && 'Registered User Accounts'}
               {activeTab === 'agents' && 'Interactive Agent Studio'}
             </h1>
             <p className="page-subtitle">
-              Connected to local SQLite database (<code style={{ background: '#e2e8f0', padding: '2px 6px', borderRadius: '4px' }}>orbit.db</code>) — Real-time records & submissions
+              Workspace administration, verified applicant queues, and system telemetry.
             </p>
           </div>
           <div className="top-actions">
-            <a href="/api/v1/download/start-windows" className="btn btn-ghost btn-sm" title="Download Windows 1-click launcher">
-              start.bat 🪟
-            </a>
-            <a href="/api/v1/download/start-mac" className="btn btn-ghost btn-sm" title="Download Mac/Linux 1-click launcher">
-              start.sh 🍎
-            </a>
             <button onClick={handleExportCsv} className="btn btn-secondary">
               Export Waitlist CSV
             </button>
@@ -263,7 +259,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToWebsite 
           <div>
             <div className="metrics-grid">
               <div className="metric-card">
-                <span className="metric-label">TOTAL WAITLIST (SQLITE)</span>
+                <span className="metric-label">TOTAL WAITLIST</span>
                 <strong className="metric-value">{stats.total_waitlist}</strong>
                 <span className="metric-trend">{stats.pending_waitlist} pending review</span>
               </div>
@@ -273,16 +269,16 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToWebsite 
                 <span className="metric-trend">{stats.new_inquiries} unread requests</span>
               </div>
               <div className="metric-card">
-                <span className="metric-label">REGISTERED USERS</span>
+                <span className="metric-label">REGISTERED BUILDERS</span>
                 <strong className="metric-value">{stats.total_users}</strong>
                 <span className="metric-trend">{stats.total_projects} active workspaces</span>
               </div>
               <div className="metric-card">
-                <span className="metric-label">STORAGE ENGINE</span>
-                <strong className="metric-value" style={{ fontSize: '24px', color: 'var(--violet)' }}>
-                  SQLite3
+                <span className="metric-label">SYSTEM STATUS</span>
+                <strong className="metric-value" style={{ fontSize: '24px', color: '#10b981' }}>
+                  99.98%
                 </strong>
-                <span className="metric-trend highlight">orbit.db tracked in git</span>
+                <span className="metric-trend highlight">All systems operational</span>
               </div>
             </div>
 
@@ -332,7 +328,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToWebsite 
         {activeTab === 'waitlist' && (
           <div className="table-card">
             <div className="table-header">
-              <h3>Waitlist Queue ({waitlistEntries.length} registered in SQLite)</h3>
+              <h3>Waitlist Queue ({waitlistEntries.length} applicants)</h3>
               <div className="filters">
                 <select
                   value={waitlistFilter}
@@ -422,7 +418,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToWebsite 
         {activeTab === 'inquiries' && (
           <div className="table-card">
             <div className="table-header">
-              <h3>Customer & Partner Inquiries ({inquiries.length} in SQLite)</h3>
+              <h3>Customer & Partner Inquiries ({inquiries.length} received)</h3>
               <select
                 value={inquiryFilter}
                 onChange={(e) => setInquiryFilter(e.target.value)}
@@ -531,9 +527,9 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToWebsite 
             <div className="table-card">
               <div className="table-header">
                 <h3>
-                  SQLite Table: <span style={{ color: 'var(--violet)' }}>{activeDbTable}</span> in <code style={{ fontSize: '13px' }}>orbit.db</code>
+                  Record View: <span style={{ color: 'var(--violet)', textTransform: 'capitalize' }}>{activeDbTable}</span>
                 </h3>
-                <small style={{ color: 'var(--muted)' }}>Live SQLite schema & records</small>
+                <small style={{ color: 'var(--muted)' }}>Verified system records & schema</small>
               </div>
               <div style={{ overflowX: 'auto' }}>
                 <table className="data-table">

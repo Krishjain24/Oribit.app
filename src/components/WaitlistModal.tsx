@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { store } from '../services/orbitStore';
 
 interface WaitlistModalProps {
@@ -21,6 +21,15 @@ export const WaitlistModal: React.FC<WaitlistModalProps> = ({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [status, setStatus] = useState<{ type: 'success' | 'error'; message: string; position?: number } | null>(null);
 
+  useEffect(() => {
+    if (!isOpen) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen, onClose]);
+
   if (!isOpen) return null;
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -40,7 +49,7 @@ export const WaitlistModal: React.FC<WaitlistModalProps> = ({
 
       setStatus({
         type: 'success',
-        message: `You're on the list! Position #${entry.queue_position || '1'} reserved for early access. Record stored in SQLite (orbit.db).`,
+        message: `You're on the list! Priority position #${entry.queue_position || '1'} reserved for your team. We will send an invite as soon as your batch opens.`,
         position: entry.queue_position,
       });
       setEmail('');

@@ -3,10 +3,9 @@ import { store } from '../services/orbitStore';
 
 interface FooterProps {
   onOpenAdmin: () => void;
-  onOpenQuickStart?: () => void;
 }
 
-export const Footer: React.FC<FooterProps> = ({ onOpenAdmin, onOpenQuickStart }) => {
+export const Footer: React.FC<FooterProps> = ({ onOpenAdmin }) => {
   const [email, setEmail] = useState('');
   const [status, setStatus] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
 
@@ -79,23 +78,6 @@ export const Footer: React.FC<FooterProps> = ({ onOpenAdmin, onOpenQuickStart })
           <a href="#platform">Platform</a>
           <a href="#workflow">How it works</a>
           <a href="#for-builders">For builders</a>
-          {onOpenQuickStart && (
-            <button
-              type="button"
-              onClick={onOpenQuickStart}
-              style={{
-                background: 'none',
-                border: 'none',
-                cursor: 'pointer',
-                color: '#059669',
-                fontWeight: 600,
-                padding: 0,
-                fontSize: '10px',
-              }}
-            >
-              Start Locally ⚡
-            </button>
-          )}
           <a
             href="/admin"
             onClick={(e) => {
@@ -103,19 +85,17 @@ export const Footer: React.FC<FooterProps> = ({ onOpenAdmin, onOpenQuickStart })
               onOpenAdmin();
             }}
             style={{
-              color: 'var(--violet)',
               fontWeight: 600,
-              fontSize: '10px',
             }}
           >
-            Mission Control (Admin) ◈
+            Console
           </a>
         </nav>
       </div>
       <div className="shell footer-bottom">
-        <span>© 2026 Orbit Studio</span>
+        <span>© 2026 Orbit Workspace, Inc. All rights reserved.</span>
         <span>
-          Built for what’s next <i>✳</i>
+          Built for human craft and agent autonomy <i>✳</i>
         </span>
       </div>
     </footer>

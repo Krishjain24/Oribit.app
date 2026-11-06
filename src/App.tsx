@@ -55,12 +55,12 @@ export const App: React.FC = () => {
           <Header
             onOpenWaitlist={() => setIsWaitlistOpen(true)}
             onOpenAdmin={openAdmin}
-            onOpenQuickStart={() => setIsQuickStartOpen(true)}
             isAdminView={false}
           />
           <main id="top">
             <Hero
               currentBuilderRole={currentBuilderRole}
+              onOpenWaitlist={() => setIsWaitlistOpen(true)}
               onOpenQuickStart={() => setIsQuickStartOpen(true)}
             />
             <CapabilityStrip />
@@ -74,7 +74,6 @@ export const App: React.FC = () => {
           </main>
           <Footer
             onOpenAdmin={openAdmin}
-            onOpenQuickStart={() => setIsQuickStartOpen(true)}
           />
         </>
       )}

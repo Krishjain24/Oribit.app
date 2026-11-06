@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { store } from '../services/orbitStore';
 
 interface InquiryModalProps {
@@ -22,6 +22,15 @@ export const InquiryModal: React.FC<InquiryModalProps> = ({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [status, setStatus] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
 
+  useEffect(() => {
+    if (!isOpen) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen, onClose]);
+
   if (!isOpen) return null;
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -42,7 +51,7 @@ export const InquiryModal: React.FC<InquiryModalProps> = ({
 
       setStatus({
         type: 'success',
-        message: "Thank you! We've received your inquiry and recorded it in SQLite (orbit.db).",
+        message: "Thank you! We've received your request. A member of our enterprise team will review your requirements and reach out within 1 business day.",
       });
       setName('');
       setEmail('');
