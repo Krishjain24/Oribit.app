@@ -1,17 +1,42 @@
 import React, { useState } from 'react';
+import { RollingText } from './RollingText';
 
 interface HeaderProps {
+  currentPath?: string;
+  onNavigate?: (path: string) => void;
   onOpenWaitlist: () => void;
   onOpenAdmin: () => void;
   isAdminView?: boolean;
 }
 
 export const Header: React.FC<HeaderProps> = ({
+  currentPath = '/',
+  onNavigate,
   onOpenWaitlist,
   onOpenAdmin,
   isAdminView,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
+
+  const handleLinkClick = (e: React.MouseEvent, path: string) => {
+    e.preventDefault();
+    setIsOpen(false);
+    if (onNavigate) {
+      onNavigate(path);
+    } else {
+      window.history.pushState(null, '', path);
+      window.dispatchEvent(new PopStateEvent('popstate'));
+    }
+  };
+
+  const navLinks = [
+    { label: 'Platform', path: '/platform' },
+    { label: 'How it works', path: '/workflow' },
+    { label: 'For builders', path: '/builders' },
+    { label: 'Playground', path: '/playground', badge: '✳' },
+    { label: 'Pricing', path: '/pricing' },
+    { label: 'Docs', path: '/docs' },
+  ];
 
   return (
     <header className="site-header">
@@ -19,13 +44,7 @@ export const Header: React.FC<HeaderProps> = ({
         <a
           className="brand"
           href="/"
-          onClick={(e) => {
-            if (isAdminView) {
-              e.preventDefault();
-              window.history.pushState(null, '', '/');
-              window.dispatchEvent(new PopStateEvent('popstate'));
-            }
-          }}
+          onClick={(e) => handleLinkClick(e, '/')}
           aria-label="Orbit home"
         >
           <span className="brand-mark" aria-hidden="true">
@@ -52,15 +71,31 @@ export const Header: React.FC<HeaderProps> = ({
         <nav className={`main-navigation ${isOpen ? 'is-open' : ''}`} aria-label="Main navigation">
           {!isAdminView ? (
             <>
-              <a href="#platform" onClick={() => setIsOpen(false)}>
-                Platform
-              </a>
-              <a href="#workflow" onClick={() => setIsOpen(false)}>
-                How it works
-              </a>
-              <a href="#for-builders" onClick={() => setIsOpen(false)}>
-                For builders
-              </a>
+              {navLinks.map((link) => {
+                const isActive = currentPath === link.path;
+                return (
+                  <a
+                    key={link.path}
+                    href={link.path}
+                    onClick={(e) => handleLinkClick(e, link.path)}
+                    style={{
+                      color: isActive ? 'var(--violet-dark)' : undefined,
+                      fontWeight: isActive ? 700 : 600,
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '4px',
+                    }}
+                  >
+                    {link.label}
+                    {link.badge && (
+                      <span style={{ fontSize: '10px', color: 'var(--violet)' }}>
+                        {link.badge}
+                      </span>
+                    )}
+                  </a>
+                );
+              })}
+
               <a
                 href="/admin"
                 className="nav-link"
@@ -69,10 +104,20 @@ export const Header: React.FC<HeaderProps> = ({
                   setIsOpen(false);
                   onOpenAdmin();
                 }}
-                style={{ fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: '6px' }}
+                style={{
+                  fontWeight: currentPath === '/admin' ? 700 : 600,
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                  color: currentPath === '/admin' ? 'var(--violet-dark)' : undefined,
+                }}
               >
                 <span>Console</span>
+                <span style={{ fontSize: '9px', background: 'var(--lime)', color: '#171820', padding: '1px 5px', borderRadius: '4px', fontWeight: 800 }}>
+                  ◈
+                </span>
               </a>
+
               <button
                 type="button"
                 className="nav-cta btn-open-waitlist"
@@ -81,7 +126,7 @@ export const Header: React.FC<HeaderProps> = ({
                   onOpenWaitlist();
                 }}
               >
-                Get started <span aria-hidden="true">↗</span>
+                <RollingText text="Get started" suffix={<span aria-hidden="true">↗</span>} />
               </button>
             </>
           ) : (
@@ -89,12 +134,7 @@ export const Header: React.FC<HeaderProps> = ({
               <a
                 href="/"
                 className="nav-link"
-                onClick={(e) => {
-                  e.preventDefault();
-                  setIsOpen(false);
-                  window.history.pushState(null, '', '/');
-                  window.dispatchEvent(new PopStateEvent('popstate'));
-                }}
+                onClick={(e) => handleLinkClick(e, '/')}
               >
                 ← Back to Website
               </a>
@@ -106,7 +146,7 @@ export const Header: React.FC<HeaderProps> = ({
                   onOpenWaitlist();
                 }}
               >
-                Join Waitlist <span aria-hidden="true">↗</span>
+                <RollingText text="Join Waitlist" suffix={<span aria-hidden="true">↗</span>} />
               </button>
             </>
           )}

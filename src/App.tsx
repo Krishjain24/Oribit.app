@@ -11,83 +11,160 @@ import { WaitlistModal } from './components/WaitlistModal';
 import { InquiryModal } from './components/InquiryModal';
 import { QuickStartModal } from './components/QuickStartModal';
 import { AdminDashboard } from './components/AdminDashboard';
+import { VisualInspectModal, VisualInspectTarget } from './components/VisualInspectModal';
+import { CursorFollower } from './components/CursorFollower';
+import { MarqueeTicker } from './components/MarqueeTicker';
+import { PlatformPage } from './pages/PlatformPage';
+import { WorkflowPage } from './pages/WorkflowPage';
+import { BuildersPage } from './pages/BuildersPage';
+import { PlaygroundPage } from './pages/PlaygroundPage';
+import { PricingPage } from './pages/PricingPage';
+import { DocsPage } from './pages/DocsPage';
 
 export const App: React.FC = () => {
-  const [isAdminView, setIsAdminView] = useState(() => {
-    if (typeof window !== 'undefined' && window.location.hash === '#admin') {
-      window.history.replaceState(null, '', '/admin');
-      return true;
+  const [currentPath, setCurrentPath] = useState<string>(() => {
+    if (typeof window !== 'undefined') {
+      if (window.location.hash === '#admin') {
+        window.history.replaceState(null, '', '/admin');
+        return '/admin';
+      }
+      return window.location.pathname || '/';
     }
-    return typeof window !== 'undefined' && window.location.pathname.startsWith('/admin');
+    return '/';
   });
 
   const [isWaitlistOpen, setIsWaitlistOpen] = useState(false);
   const [isInquiryOpen, setIsInquiryOpen] = useState(false);
   const [isQuickStartOpen, setIsQuickStartOpen] = useState(false);
+  const [inspectTarget, setInspectTarget] = useState<VisualInspectTarget | null>(null);
   const [currentBuilderRole, setCurrentBuilderRole] = useState<'frontend' | 'fullstack' | 'teams'>('fullstack');
+
+  const navigate = (path: string) => {
+    window.history.pushState(null, '', path);
+    setCurrentPath(path);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
   useEffect(() => {
     const handlePopState = () => {
-      setIsAdminView(window.location.pathname.startsWith('/admin'));
+      setCurrentPath(window.location.pathname || '/');
     };
     window.addEventListener('popstate', handlePopState);
     return () => window.removeEventListener('popstate', handlePopState);
   }, []);
 
-  const openAdmin = () => {
-    window.history.pushState(null, '', '/admin');
-    setIsAdminView(true);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
-
-  const closeAdmin = () => {
-    window.history.pushState(null, '', '/');
-    setIsAdminView(false);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
+  const isAdminView = currentPath.startsWith('/admin');
 
   return (
     <div className="orbit-app">
+      <CursorFollower />
       {isAdminView ? (
-        <AdminDashboard onBackToWebsite={closeAdmin} />
+        <AdminDashboard onBackToWebsite={() => navigate('/')} />
       ) : (
         <>
           <Header
+            currentPath={currentPath}
+            onNavigate={navigate}
             onOpenWaitlist={() => setIsWaitlistOpen(true)}
-            onOpenAdmin={openAdmin}
+            onOpenAdmin={() => navigate('/admin')}
             isAdminView={false}
           />
-          <main id="top">
-            <Hero
-              currentBuilderRole={currentBuilderRole}
-              onOpenWaitlist={() => setIsWaitlistOpen(true)}
-              onOpenQuickStart={() => setIsQuickStartOpen(true)}
-            />
-            <CapabilityStrip />
-            <PlatformSection />
-            <WorkflowSection />
-            <BuildersSection onRoleChange={setCurrentBuilderRole} />
-            <ClosingSection
-              onOpenWaitlist={() => setIsWaitlistOpen(true)}
-              onOpenInquiry={() => setIsInquiryOpen(true)}
-            />
+
+          <main id="top" className="page-transition-wrapper">
+            {currentPath === '/platform' && (
+              <PlatformPage
+                onOpenWaitlist={() => setIsWaitlistOpen(true)}
+                onNavigate={navigate}
+              />
+            )}
+
+            {currentPath === '/workflow' && (
+              <WorkflowPage
+                onOpenWaitlist={() => setIsWaitlistOpen(true)}
+                onNavigate={navigate}
+              />
+            )}
+
+            {currentPath === '/builders' && (
+              <BuildersPage
+                onOpenWaitlist={() => setIsWaitlistOpen(true)}
+                onNavigate={navigate}
+                onSelectRole={(role) => setCurrentBuilderRole(role)}
+              />
+            )}
+
+            {(currentPath === '/playground' || currentPath === '/studio') && (
+              <PlaygroundPage
+                onOpenWaitlist={() => setIsWaitlistOpen(true)}
+                onNavigate={navigate}
+              />
+            )}
+
+            {currentPath === '/pricing' && (
+              <PricingPage
+                onOpenWaitlist={() => setIsWaitlistOpen(true)}
+                onOpenInquiry={() => setIsInquiryOpen(true)}
+                onNavigate={navigate}
+              />
+            )}
+
+            {currentPath === '/docs' && (
+              <DocsPage
+                onOpenWaitlist={() => setIsWaitlistOpen(true)}
+                onNavigate={navigate}
+              />
+            )}
+
+            {/* Fallback to Home if root or unknown route */}
+            {currentPath !== '/platform' &&
+              currentPath !== '/workflow' &&
+              currentPath !== '/builders' &&
+              currentPath !== '/playground' &&
+              currentPath !== '/studio' &&
+              currentPath !== '/pricing' &&
+              currentPath !== '/docs' && (
+                <>
+                  <Hero
+                    currentBuilderRole={currentBuilderRole}
+                    onOpenWaitlist={() => setIsWaitlistOpen(true)}
+                    onOpenQuickStart={() => setIsQuickStartOpen(true)}
+                    onInspect={(target) => setInspectTarget(target)}
+                  />
+                  <MarqueeTicker />
+                  <CapabilityStrip />
+                  <PlatformSection />
+                  <WorkflowSection />
+                  <BuildersSection onRoleChange={setCurrentBuilderRole} />
+                  <ClosingSection
+                    onOpenWaitlist={() => setIsWaitlistOpen(true)}
+                    onOpenInquiry={() => setIsInquiryOpen(true)}
+                  />
+                </>
+              )}
           </main>
+
           <Footer
-            onOpenAdmin={openAdmin}
+            onOpenAdmin={() => navigate('/admin')}
+            onNavigate={navigate}
           />
         </>
       )}
 
       {/* Global Modals */}
+      <VisualInspectModal
+        target={inspectTarget}
+        onClose={() => setInspectTarget(null)}
+        onOpenWaitlist={() => setIsWaitlistOpen(true)}
+      />
       <WaitlistModal
         isOpen={isWaitlistOpen}
         onClose={() => setIsWaitlistOpen(false)}
-        onOpenAdmin={openAdmin}
+        onOpenAdmin={() => navigate('/admin')}
       />
       <InquiryModal
         isOpen={isInquiryOpen}
         onClose={() => setIsInquiryOpen(false)}
-        onOpenAdmin={openAdmin}
+        onOpenAdmin={() => navigate('/admin')}
       />
       <QuickStartModal
         isOpen={isQuickStartOpen}

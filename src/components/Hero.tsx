@@ -1,17 +1,24 @@
 import React, { useState } from 'react';
 import { AgentService } from '../services/agentService';
 import { AgentStep } from '../types';
+import { useTilt } from '../hooks/useTilt';
+import { RollingText } from './RollingText';
 
 interface HeroProps {
   currentBuilderRole?: string;
   onOpenWaitlist?: () => void;
   onOpenQuickStart?: () => void;
+  onInspect?: (target: any) => void;
 }
 
 export const Hero: React.FC<HeroProps> = ({
   currentBuilderRole = 'fullstack',
   onOpenWaitlist,
+  onInspect,
 }) => {
+  const heroWindowRef = useTilt<HTMLDivElement>({ maxTilt: 4, perspective: 1100, scale: 1.015 });
+  const previewRef = useTilt<HTMLDivElement>({ maxTilt: 7, perspective: 1000, scale: 1.03 });
+
   const [prompt, setPrompt] = useState(
     'Give the product page a calmer layout and make the gallery feel more immersive.'
   );
@@ -71,6 +78,46 @@ export const Hero: React.FC<HeroProps> = ({
     }
   };
 
+  const openHeroInspect = () => {
+    if (onInspect) {
+      onInspect({
+        id: 'hero-workspace',
+        title: 'Orbit Autonomous Workspace Console',
+        subtitle: `${projectName} • Multi-Agent Orchestration Engine`,
+        category: 'workspace',
+        summary: `Interactive multi-agent canvas showing real-time prompt decomposition, AST tree-sitter code indexing, and continuous headless browser verification loops for "${prompt}".`,
+        details: {
+          metrics: [
+            { label: 'Active Plan', value: '3 Milestones' },
+            { label: 'Files Tracked', value: '18 files' },
+            { label: 'Latency', value: '420ms' },
+            { label: 'Audit Status', value: 'Verified' },
+          ],
+        },
+      });
+    }
+  };
+
+  const openPreviewInspect = () => {
+    if (onInspect) {
+      onInspect({
+        id: 'hero-preview',
+        title: 'Headless Browser Visual Review',
+        subtitle: 'Chromium Audit • Viewport Verification',
+        category: 'browser',
+        summary: 'Automated Playwright runner validates rendered layout, DOM styling, zero visual regressions, and interactive state transitions before pull request synthesis.',
+        details: {
+          metrics: [
+            { label: 'Engine', value: 'Chromium' },
+            { label: 'Viewports', value: 'Desktop + Mobile' },
+            { label: 'Dom Errors', value: '0' },
+            { label: 'Lighthouse', value: '99/100' },
+          ],
+        },
+      });
+    }
+  };
+
   return (
     <section className="hero shell" aria-labelledby="hero-title">
       <div className="hero-copy">
@@ -78,44 +125,65 @@ export const Hero: React.FC<HeroProps> = ({
           <span className="live-dot"></span> THE AGENT-FIRST WORKSPACE
         </p>
         <h1 id="hero-title">
-          Make room
+          <span className="mask-reveal-wrap">
+            <span className="mask-reveal-item">Architect the vision.</span>
+          </span>
           <br />
-          for <span>what’s next.</span>
+          <span className="mask-reveal-wrap">
+            <span className="mask-reveal-item" style={{ animationDelay: '0.12s' }}>
+              <span>Let agents build the rest.</span>
+            </span>
+          </span>
         </h1>
         <p className="hero-description">
-          Bring your best ideas. Orbit’s AI agents plan, build, and check your work while you stay in control of the direction.
+          Turn high-level product intent into working, production-grade software. Orbit coordinates autonomous engineering agents to plan, execute surgical edits across your codebase, and verify every change in real headless browsers before landing.
         </p>
         <div className="hero-actions">
           {onOpenWaitlist && (
             <button
               type="button"
-              className="button button-lime"
+              className="button button-lime roll-btn"
               onClick={onOpenWaitlist}
               style={{ cursor: 'pointer', border: 'none' }}
+              title="Join Early Access waitlist"
             >
-              Join Early Access <span aria-hidden="true">↗</span>
+              <RollingText text="Join Early Access" suffix={<span aria-hidden="true">↗</span>} />
             </button>
           )}
-          <a className="button button-dark" href="#platform">
-            Explore the platform <span aria-hidden="true">↓</span>
+          <a className="button button-dark roll-btn" href="#platform" title="Explore Orbit platform capabilities">
+            <RollingText text="Explore the platform" suffix={<span aria-hidden="true">↓</span>} />
           </a>
-          <a className="text-link" href="#workflow">
-            See how it works <span aria-hidden="true">→</span>
+          <a className="text-link roll-btn" href="#workflow" title="See orchestration workflow in action">
+            <RollingText text="See how it works" suffix={<span aria-hidden="true">→</span>} />
           </a>
         </div>
         <div className="hero-note">
           <span className="note-check" aria-hidden="true">
             ✓
           </span>{' '}
-          From first sketch to finished build
+          From architectural brief to verified pull request
         </div>
       </div>
 
       <div className="hero-art" aria-label="Illustration of an AI agent planning, building, and checking a project">
-        <div className="orbit-glow"></div>
+        <div className="hero-grid-bg" aria-hidden="true"></div>
         <div className="orbit-ring orbit-ring-one"></div>
         <div className="orbit-ring orbit-ring-two"></div>
-        <div className="hero-window">
+        <div
+          ref={heroWindowRef}
+          className="hero-window hover-expand tilt-card-active"
+          onClick={openHeroInspect}
+          role="button"
+          tabIndex={0}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              openHeroInspect();
+            }
+          }}
+          title="Click to expand & inspect full architectural workspace"
+          style={{ cursor: 'pointer' }}
+        >
           <div className="window-topbar">
             <div className="window-dots" aria-hidden="true">
               <i></i>
@@ -125,8 +193,8 @@ export const Hero: React.FC<HeroProps> = ({
             <div className="window-path">
               <span className="path-icon">◈</span> {projectName}
             </div>
-            <span className="window-menu" aria-hidden="true">
-              •••
+            <span className="window-expand-hint" style={{ fontSize: '9px', fontWeight: 600, color: 'var(--violet)', display: 'flex', alignItems: 'center', gap: '3px' }}>
+              Expand ↗
             </span>
           </div>
           <div className="workspace-layout">
@@ -147,7 +215,10 @@ export const Hero: React.FC<HeroProps> = ({
                   <span></span> main
                 </span>
               </div>
-              <div className="task-prompt-interactive">
+              <div
+                className="task-prompt-interactive"
+                onClick={(e) => e.stopPropagation()}
+              >
                 <span className="sparkle" style={{ color: 'var(--violet)', fontSize: '13px' }}>
                   ✳
                 </span>
@@ -165,11 +236,15 @@ export const Hero: React.FC<HeroProps> = ({
                   onClick={handleRunAgent}
                   disabled={isRunning}
                   aria-label="Run AI agent"
+                  title="Execute prompt across agents"
                 >
                   {isRunning ? '...' : 'Run'} <span>✳</span>
                 </button>
               </div>
-              <div style={{ display: 'flex', gap: '6px', margin: '8px 0 14px', flexWrap: 'wrap' }}>
+              <div
+                style={{ display: 'flex', gap: '6px', margin: '8px 0 14px', flexWrap: 'wrap' }}
+                onClick={(e) => e.stopPropagation()}
+              >
                 <span style={{ fontSize: '10px', color: 'var(--muted)', alignSelf: 'center', fontWeight: 600, letterSpacing: '0.04em' }}>TRY:</span>
                 {[
                   { label: 'Storefront refresh', text: 'Give the product page a calmer layout and make the gallery feel more immersive.' },
@@ -181,23 +256,25 @@ export const Hero: React.FC<HeroProps> = ({
                     type="button"
                     onClick={() => handleSelectSamplePrompt(item.text)}
                     style={{
-                      background: 'rgba(238, 235, 255, 0.65)',
-                      border: '1px solid rgba(117, 100, 245, 0.2)',
+                      background: '#F8FAFC',
+                      border: '1px solid var(--line)',
                       borderRadius: '999px',
-                      padding: '3px 10px',
+                      padding: '4px 12px',
                       fontSize: '11px',
-                      color: 'var(--violet-dark)',
+                      color: 'var(--ink)',
                       cursor: 'pointer',
-                      fontWeight: 500,
+                      fontWeight: 600,
                       transition: 'all 0.15s ease',
                     }}
                     onMouseEnter={(e) => {
-                      e.currentTarget.style.background = 'var(--violet)';
+                      e.currentTarget.style.background = 'var(--ink)';
                       e.currentTarget.style.color = '#fff';
+                      e.currentTarget.style.borderColor = 'var(--ink)';
                     }}
                     onMouseLeave={(e) => {
-                      e.currentTarget.style.background = 'rgba(238, 235, 255, 0.65)';
-                      e.currentTarget.style.color = 'var(--violet-dark)';
+                      e.currentTarget.style.background = '#F8FAFC';
+                      e.currentTarget.style.color = 'var(--ink)';
+                      e.currentTarget.style.borderColor = 'var(--line)';
                     }}
                   >
                     {item.label}
@@ -239,7 +316,21 @@ export const Hero: React.FC<HeroProps> = ({
           </div>
         </div>
 
-        <div className="preview-float">
+        <div
+          ref={previewRef}
+          className="preview-float hover-expand tilt-card-active"
+          onClick={openPreviewInspect}
+          role="button"
+          tabIndex={0}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              openPreviewInspect();
+            }
+          }}
+          title="Click to expand browser preview & Playwright audit"
+          style={{ cursor: 'pointer' }}
+        >
           <div className="preview-label">
             <span className="preview-dot"></span> LIVE PREVIEW
           </div>
@@ -254,13 +345,13 @@ export const Hero: React.FC<HeroProps> = ({
           </div>
           <div className="preview-caption">
             <span>Product detail</span>
-            <span>↗</span>
+            <span style={{ color: 'var(--violet)' }}>Expand ↗</span>
           </div>
         </div>
-        <div className="floating-tag tag-plan">
+        <div className="floating-tag tag-plan hover-expand">
           <span>✳</span> Plan
         </div>
-        <div className="floating-tag tag-verify">
+        <div className="floating-tag tag-verify hover-expand">
           <span>✓</span> Verify
         </div>
       </div>

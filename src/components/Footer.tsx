@@ -3,18 +3,19 @@ import { store } from '../services/orbitStore';
 
 interface FooterProps {
   onOpenAdmin: () => void;
+  onNavigate?: (path: string) => void;
 }
 
-export const Footer: React.FC<FooterProps> = ({ onOpenAdmin }) => {
+export const Footer: React.FC<FooterProps> = ({ onOpenAdmin, onNavigate }) => {
   const [email, setEmail] = useState('');
   const [status, setStatus] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
 
-  const handleSubscribe = (e: React.FormEvent) => {
+  const handleSubscribe = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email.trim()) return;
 
     try {
-      store.subscribeNewsletter(email);
+      await store.subscribeNewsletter(email);
       setStatus({
         type: 'success',
         message: '✓ Subscribed! You will receive future Orbit product updates.',
@@ -26,6 +27,17 @@ export const Footer: React.FC<FooterProps> = ({ onOpenAdmin }) => {
         message: 'Could not subscribe. Please try again.',
       });
     }
+  };
+
+  const handleLink = (e: React.MouseEvent, path: string) => {
+    e.preventDefault();
+    if (onNavigate) {
+      onNavigate(path);
+    } else {
+      window.history.pushState(null, '', path);
+      window.dispatchEvent(new PopStateEvent('popstate'));
+    }
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   return (
@@ -63,7 +75,7 @@ export const Footer: React.FC<FooterProps> = ({ onOpenAdmin }) => {
         </div>
       </div>
       <div className="shell footer-main">
-        <a className="brand footer-brand" href="#top" aria-label="Orbit home">
+        <a className="brand footer-brand" href="/" onClick={(e) => handleLink(e, '/')} aria-label="Orbit home">
           <span className="brand-mark" aria-hidden="true">
             <svg viewBox="0 0 36 36" fill="none" width="32" height="32" style={{ maxWidth: '32px', maxHeight: '32px' }}>
               <circle cx="18" cy="18" r="12.5" stroke="currentColor" strokeWidth="1.7" />
@@ -75,9 +87,12 @@ export const Footer: React.FC<FooterProps> = ({ onOpenAdmin }) => {
         </a>
         <p>Move from idea to impact.</p>
         <nav aria-label="Footer navigation">
-          <a href="#platform">Platform</a>
-          <a href="#workflow">How it works</a>
-          <a href="#for-builders">For builders</a>
+          <a href="/platform" onClick={(e) => handleLink(e, '/platform')}>Platform</a>
+          <a href="/workflow" onClick={(e) => handleLink(e, '/workflow')}>How it works</a>
+          <a href="/builders" onClick={(e) => handleLink(e, '/builders')}>For builders</a>
+          <a href="/playground" onClick={(e) => handleLink(e, '/playground')}>Playground ✳</a>
+          <a href="/pricing" onClick={(e) => handleLink(e, '/pricing')}>Pricing</a>
+          <a href="/docs" onClick={(e) => handleLink(e, '/docs')}>Docs</a>
           <a
             href="/admin"
             onClick={(e) => {
@@ -86,9 +101,10 @@ export const Footer: React.FC<FooterProps> = ({ onOpenAdmin }) => {
             }}
             style={{
               fontWeight: 600,
+              color: 'var(--violet)',
             }}
           >
-            Console
+            Console ◈
           </a>
         </nav>
       </div>

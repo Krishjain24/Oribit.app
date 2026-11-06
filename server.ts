@@ -9,8 +9,32 @@ import { createServer as createViteServer } from 'vite';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const PORT = 3000;
-const HOST = '0.0.0.0';
+process.on('uncaughtException', (err) => {
+  console.error('[Orbit Server] Caught exception:', err);
+});
+process.on('unhandledRejection', (reason) => {
+  console.error('[Orbit Server] Unhandled rejection:', reason);
+});
+
+let PORT = 3000;
+let HOST = '0.0.0.0';
+
+if (process.env.PORT) {
+  PORT = parseInt(process.env.PORT, 10);
+}
+const portArgIndex = process.argv.indexOf('--port');
+if (portArgIndex !== -1 && process.argv[portArgIndex + 1]) {
+  PORT = parseInt(process.argv[portArgIndex + 1], 10);
+}
+
+if (process.env.HOST) {
+  HOST = process.env.HOST;
+}
+const hostArgIndex = process.argv.indexOf('--host');
+if (hostArgIndex !== -1 && process.argv[hostArgIndex + 1]) {
+  HOST = process.argv[hostArgIndex + 1];
+}
+
 const isProduction = process.env.NODE_ENV === 'production';
 
 // Initialize SQLite Database stored in orbit.db
@@ -397,13 +421,20 @@ async function startServer() {
   // Mount Vite or serve static build
   if (!isProduction) {
     const vite = await createViteServer({
-      server: { middlewareMode: true },
+      server: {
+        middlewareMode: true,
+        hmr: false,
+        allowedHosts: true,
+      },
       appType: 'spa',
     });
     app.use(vite.middlewares);
 
     app.use(async (req: Request, res: Response, next) => {
       if (req.method !== 'GET' || req.path.startsWith('/api')) {
+        return next();
+      }
+      if (req.path.includes('.') && !req.path.endsWith('.html')) {
         return next();
       }
       try {
@@ -423,8 +454,12 @@ async function startServer() {
     });
   }
 
-  app.listen(PORT, HOST, () => {
+  const server = app.listen(PORT, HOST, () => {
     console.log(`[Orbit Full-Stack] Server running on http://${HOST}:${PORT} (connected to SQLite orbit.db)`);
+  });
+
+  server.on('error', (err: any) => {
+    console.error('[Orbit Server] Server error:', err);
   });
 }
 

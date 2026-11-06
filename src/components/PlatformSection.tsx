@@ -1,4 +1,5 @@
 import React from 'react';
+import { RollingText } from './RollingText';
 
 export const PlatformSection: React.FC = () => {
   return (
@@ -16,7 +17,7 @@ export const PlatformSection: React.FC = () => {
       </div>
 
       <div className="platform-grid">
-        <article className="feature-card feature-card-dark">
+        <article className="feature-card feature-card-dark hover-expand">
           <div className="feature-topline">
             <span className="feature-icon icon-orchestrate">✳</span>
             <span>01 / ORCHESTRATE</span>
@@ -36,12 +37,12 @@ export const PlatformSection: React.FC = () => {
             on the same page.
           </h3>
           <p>Give a clear brief, then follow each agent’s plan and progress from one focused workspace.</p>
-          <a href="#workflow" className="card-link">
-            See orchestration <span aria-hidden="true">↗</span>
+          <a href="#workflow" className="card-link roll-btn">
+            <RollingText text="See orchestration" suffix={<span aria-hidden="true">↗</span>} />
           </a>
         </article>
 
-        <article className="feature-card feature-card-lilac">
+        <article className="feature-card feature-card-lilac hover-expand">
           <div className="feature-topline">
             <span className="feature-icon icon-editor">⌘</span>
             <span>02 / CREATE</span>
@@ -80,12 +81,12 @@ export const PlatformSection: React.FC = () => {
             the implementation.
           </h3>
           <p>Work in a familiar editor while agents navigate your codebase and make focused changes.</p>
-          <a href="#workflow" className="card-link">
-            Explore the workspace <span aria-hidden="true">↗</span>
+          <a href="#workflow" className="card-link roll-btn">
+            <RollingText text="Explore the workspace" suffix={<span aria-hidden="true">↗</span>} />
           </a>
         </article>
 
-        <article className="feature-card feature-card-mint">
+        <article className="feature-card feature-card-mint hover-expand">
           <div className="feature-topline">
             <span className="feature-icon icon-browser">◉</span>
             <span>03 / VERIFY</span>
@@ -124,8 +125,8 @@ export const PlatformSection: React.FC = () => {
             before it ships.
           </h3>
           <p>Pair code changes with browser checks and visual review, so you can move forward with confidence.</p>
-          <a href="#workflow" className="card-link">
-            See browser review <span aria-hidden="true">↗</span>
+          <a href="#workflow" className="card-link roll-btn">
+            <RollingText text="See browser review" suffix={<span aria-hidden="true">↗</span>} />
           </a>
         </article>
       </div>

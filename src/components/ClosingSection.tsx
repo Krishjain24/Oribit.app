@@ -1,4 +1,5 @@
 import React from 'react';
+import { RollingText } from './RollingText';
 
 interface ClosingSectionProps {
   onOpenWaitlist: () => void;
@@ -21,11 +22,11 @@ export const ClosingSection: React.FC<ClosingSectionProps> = ({ onOpenWaitlist, 
         </h2>
         <p>Bring your next project into focus with a workspace built around the way you think.</p>
         <div style={{ display: 'flex', gap: '12px', justifyContent: 'center', flexWrap: 'wrap' }}>
-          <button className="button button-lime btn-open-waitlist" type="button" onClick={onOpenWaitlist}>
-            Join Early Access <span aria-hidden="true">↗</span>
+          <button className="button button-lime btn-open-waitlist roll-btn" type="button" onClick={onOpenWaitlist}>
+            <RollingText text="Join Early Access" suffix={<span aria-hidden="true">↗</span>} />
           </button>
-          <button className="button button-light btn-open-inquiry" type="button" onClick={onOpenInquiry}>
-            Request Team Demo <span aria-hidden="true">→</span>
+          <button className="button button-light btn-open-inquiry roll-btn" type="button" onClick={onOpenInquiry}>
+            <RollingText text="Request Team Demo" suffix={<span aria-hidden="true">→</span>} />
           </button>
         </div>
       </div>
